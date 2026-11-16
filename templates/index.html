@@ -236,10 +236,25 @@
             formData.append("audio", audioBlob, "question.webm");
 
             try {
-                const response = await fetch("/analyze", {
-                    method: "POST",
-                    body: formData
-                });
+               const responseText = await response.text();
+
+let data;
+
+try {
+    data = JSON.parse(responseText);
+} catch (error) {
+    throw new Error(
+        "Server returned an invalid response. HTTP status: "
+        + response.status
+        + ". Please check Render Logs."
+    );
+}
+
+if (!response.ok) {
+    throw new Error(data.error || "Analysis failed.");
+}
+
+resultDiv.textContent = data.answer || "No answer received.";
 
                 const data = await response.json();
 
