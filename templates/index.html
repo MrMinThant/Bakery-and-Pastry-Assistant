@@ -243,9 +243,23 @@
 
                 const data = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(data.error || "Analysis failed.");
-                }
+const responseText = await response.text();
+
+let data;
+
+try {
+    data = JSON.parse(responseText);
+} catch (error) {
+    throw new Error(
+        "Server returned an invalid response. HTTP status: "
+        + response.status
+        + ". Please check Render Logs."
+    );
+}
+
+if (!response.ok) {
+    throw new Error(data.error || "Analysis failed.");
+}
 
                 resultDiv.textContent = data.answer || "No answer received.";
 
